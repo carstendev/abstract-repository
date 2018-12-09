@@ -1,4 +1,4 @@
-package finaltagless
+package taglessfinal
 
 import model.User
 
@@ -6,7 +6,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Success, Try}
 
 /**
-  * Using the final tagless encoding, we abstract over the result monad,
+  * Using the tagless final encoding, we abstract over the result monad,
   * leaving us free to use different implementations.
   */
 trait UserRepository[F[_]] {
