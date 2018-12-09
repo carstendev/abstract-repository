@@ -15,7 +15,7 @@ import scala.util.Success
 /**
   * As our repository is not bound to a result monad, our client also doesn't have to be.
   */
-class UserClient {
+class ClientRankManager {
 
   import free.UserRepositorySyntax._
 
@@ -47,7 +47,7 @@ object Main extends App {
     }
   }
 
-  val nonBlockingInterpreter = new (UserRepositoryAlg ~> Try) {
+  val blockingInterpreter = new (UserRepositoryAlg ~> Try) {
     override def apply[A](fa: UserRepositoryAlg[A]): Try[A] = fa match {
       case Find(id) =>
         /* go and talk to a database */
@@ -61,11 +61,11 @@ object Main extends App {
 
   // non blocking
   val futureResult: Future[Either[String, Unit]] =
-    new UserClient().updateRank(1, 10).foldMap(futureInterpreter)
+    new ClientRankManager().updateRank(1, 10).foldMap(futureInterpreter)
 
   // blockingResult
   val blockingResult: Try[Either[String, Unit]] =
-    new UserClient().updateRank(1, 10).foldMap(nonBlockingInterpreter)
+    new ClientRankManager().updateRank(1, 10).foldMap(blockingInterpreter)
 
   println(Await.result(futureResult, Duration.Inf))
   println(blockingResult)

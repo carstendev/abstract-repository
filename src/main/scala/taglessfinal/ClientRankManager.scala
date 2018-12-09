@@ -10,7 +10,7 @@ import scala.util.Try
 /**
   * As our repository is not bound to a result monad, our client also doesn't have to be.
   */
-class UserClient[F[_] : Monad](repository: UserRepository[F]) {
+class ClientRankManager[F[_] : Monad](repository: UserRepository[F]) {
 
   def updateRank(userId: Long, rank: Int): F[Either[String, Unit]] = {
     repository.find(userId).flatMap {
@@ -31,16 +31,13 @@ object Main extends App {
 
   // non blocking
   val futureResult: Future[Either[String, Unit]] =
-    new UserClient(new FutureUserRepository).updateRank(1, 10)
+    new ClientRankManager(new FutureUserRepository).updateRank(1, 10)
 
   // blocking
   val blockingResult: Try[Either[String, Unit]] =
-    new UserClient(new BlockingUserRepository).updateRank(1, 10)
+    new ClientRankManager(new BlockingUserRepository).updateRank(1, 10)
 
-  val fResult =
-    Await.result(futureResult, Duration.Inf)
-
-  println(fResult)
+  println(Await.result(futureResult, Duration.Inf))
   println(blockingResult)
 
 }
