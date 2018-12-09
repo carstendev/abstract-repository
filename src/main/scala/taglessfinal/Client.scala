@@ -12,7 +12,7 @@ import scala.util.Try
   */
 class UserClient[F[_] : Monad](repository: UserRepository[F]) {
 
-  def setRank(userId: Long, rank: Int): F[Either[String, Unit]] = {
+  def updateRank(userId: Long, rank: Int): F[Either[String, Unit]] = {
     repository.find(userId).flatMap {
       case None =>
         implicitly[Monad[F]].pure(Left("user not found"))
@@ -31,11 +31,11 @@ object Main extends App {
 
   // non blocking
   val futureResult: Future[Either[String, Unit]] =
-    new UserClient(new FutureUserRepository).setRank(1, 10)
+    new UserClient(new FutureUserRepository).updateRank(1, 10)
 
   // blocking
   val blockingResult: Try[Either[String, Unit]] =
-    new UserClient(new BlockingUserRepository).setRank(1, 10)
+    new UserClient(new BlockingUserRepository).updateRank(1, 10)
 
   val fResult =
     Await.result(futureResult, Duration.Inf)

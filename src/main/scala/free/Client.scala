@@ -19,7 +19,7 @@ class UserClient {
 
   import free.UserRepositorySyntax._
 
-  def setRank(userId: Long, rank: Int): UserRepository[Either[String, Unit]] = {
+  def updateRank(userId: Long, rank: Int): UserRepository[Either[String, Unit]] = {
     find(userId).flatMap {
       case None =>
         Free.pure(Left("user not found"))
@@ -61,11 +61,11 @@ object Main extends App {
 
   // non blocking
   val futureResult: Future[Either[String, Unit]] =
-    new UserClient().setRank(1, 10).foldMap(futureInterpreter)
+    new UserClient().updateRank(1, 10).foldMap(futureInterpreter)
 
   // blockingResult
   val blockingResult: Try[Either[String, Unit]] =
-    new UserClient().setRank(1, 10).foldMap(nonBlockingInterpreter)
+    new UserClient().updateRank(1, 10).foldMap(nonBlockingInterpreter)
 
   println(Await.result(futureResult, Duration.Inf))
   println(blockingResult)

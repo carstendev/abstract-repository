@@ -5,7 +5,7 @@ import scala.concurrent.{Await, ExecutionContext, Future}
 
 class Client(userRepository: UserRepository) {
 
-  def setRank(userId: Long, rank: Int)(implicit ec: ExecutionContext): Future[Unit] =
+  def updateRank(userId: Long, rank: Int)(implicit ec: ExecutionContext): Future[Unit] =
     userRepository.find(userId).flatMap { user =>
       userRepository.update(user.copy(rank = rank))
     }
@@ -18,7 +18,7 @@ object Main extends App {
 
   // Always bound to future
   val result: Future[Unit] =
-    new Client(new UserRepositoryImpl).setRank(1, 10)
+    new Client(new UserRepositoryImpl).updateRank(1, 10)
 
   println(Await.result(result, Duration.Inf))
 }
